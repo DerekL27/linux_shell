@@ -22,9 +22,9 @@ char last[BUFFER_SIZE] = "";
 
 //code for 'exit'
 void exit_help(char *my_argv[]) {
-//    for (int i = 0; i < child_count; i += 1) {
-//        kill(child_processes[i], SIGKILL);
-//    }
+    for (int i = child_count - 1; i >= 0; i -= 1) {
+        kill(child_processes[i], SIGKILL);
+    }
     printf("Bye bye.\n");
     exit(0);
 }

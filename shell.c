@@ -25,7 +25,7 @@ void exit_help(char *my_argv[]) {
     for (int i = 0; i < child_count; i += 1) {
         kill(child_processes[i], SIGKILL);
     }
-    printf("Bye bye.");
+    printf("Bye bye.\n");
     exit(0);
 }
 

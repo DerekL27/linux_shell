@@ -23,7 +23,7 @@ char last[BUFFER_SIZE] = "";
 //code for 'exit'
 void exit_help(char *my_argv[]) {
     for (int i = 0; i < child_count; i += 1) {
-        kill(child_processes[i], SIGQUIT);
+        kill(child_processes[i], SIGKILL);
     }
     printf("Bye bye.\n");
     exit(0);
@@ -224,6 +224,10 @@ int main(int argc, char **argv){
 
         printf("shell $");
         fgets(input, BUFFER_SIZE, stdin);
+        if (feof(stdin)){
+            printf("Bye bye.\n");
+            exit(0);
+        }
         input[strcspn(input, "\n")] = 0;
         char *commands[BUFFER_SIZE];
         // split the input into different commands by semicolon

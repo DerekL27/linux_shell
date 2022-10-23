@@ -225,7 +225,7 @@ int main(int argc, char **argv){
         printf("shell $");
         fgets(input, BUFFER_SIZE, stdin);
         if (feof(stdin)){
-            printf("Bye bye.\n");
+            printf("\nBye bye.\n");
             exit(0);
         }
         input[strcspn(input, "\n")] = 0;

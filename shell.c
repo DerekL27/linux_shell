@@ -90,7 +90,6 @@ void help_help(char *my_argv[]) {
 
 //handles running built in commands
 int built_in_help(char *my_argv[]) {
-    int cmd;
     if (strcmp(my_argv[0], "exit") == 0) {
         exit_help(my_argv);
     }
@@ -225,6 +224,7 @@ int main(int argc, char **argv){
 
         printf("shell $");
         fgets(input, BUFFER_SIZE, stdin);
+        input[strcspn(input, "\n")] = 0;
         char *commands[BUFFER_SIZE];
         // split the input into different commands by semicolon
         int num_commands = split(input, commands, ";");

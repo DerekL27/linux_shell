@@ -219,10 +219,11 @@ void handle_command(char cmd[]) {
 int main(int argc, char **argv){
 
     char input[BUFFER_SIZE];
+    printf("Welcome to mini-shell.\n");
 
     while(1) {
 
-        printf("mini-shell>");
+        printf("shell $");
         fgets(input, BUFFER_SIZE, stdin);
         char *commands[BUFFER_SIZE];
         // split the input into different commands by semicolon

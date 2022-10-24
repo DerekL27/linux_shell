@@ -184,14 +184,14 @@ void handle_command(char cmd[]) {
 
         if(strstr(subcommands[i],"<")){
             close(0);
-            char* tempRedirect;
+            char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
             open(tempRedirect[1], O_RDONLY);
             subcommands[i] = tempRedirect[0];
         }
         if(strstr(subcommands[i],">")){
             close(1);
-            char* tempRedirect;
+            char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
             open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
             subcommands[i] = tempRedirect[0];

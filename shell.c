@@ -85,7 +85,7 @@ void prev_help(char *my_argv[]) {
 
 //code for 'help'
 void help_help(char *my_argv[]) {
-    write(1, "cd: This command should change the current working directory of the shell.\nsource: Execute a script.Takes a filename as an argument and processes each line of the file as a command, including built-ins.\nprev: Prints the previous command line and executes it again.\nhelp: Explains all the built-in commands available in your shell", 300);
+    write(1, "cd: This command should change the current working directory of the shell.\nsource: Execute a script.Takes a filename as an argument and processes each line of the file as a command, including built-ins.\nprev: Prints the previous command line and executes it again.\nhelp: Explains all the built-in commands available in your shell", 400);
 }
 
 //handles running built in commands
@@ -181,8 +181,6 @@ void handle_command(char cmd[]) {
         // current command in the string of pipes
         //char *my_argv[BUFFER_SIZE];
         // get length of commands to pipe
-        char *input_redirect;
-        char *output_redirect;
 
         char **my_argv = get_tokens(subcommands[i]);
         assert(my_argv != NULL);

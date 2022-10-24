@@ -178,9 +178,6 @@ void handle_command(char cmd[]) {
 
     //execute commands split by piping
     for (int i = 0; i < num_subcommands; i += 1) {
-        // current command in the string of pipes
-        //char *my_argv[BUFFER_SIZE];
-        // get length of commands to pipe
 
         if(strstr(subcommands[i],"<")){
             char* tempRedirect[2];

@@ -183,29 +183,14 @@ void handle_command(char cmd[]) {
         // get length of commands to pipe
         char *input_redirect;
         char *output_redirect;
-        char *redirectParts[BUFFER_SIZE];
-
-        input_redirect = strstr(subcommands[i], '<');
-        if(input_redirect){
-            //splits the commands by pipe
-            char *redirectParts[BUFFER_SIZE];
-            int ignored = split(subcommands[i], redirectParts, "<");
-            subcommands[i] = redirectParts[0];
-        }
-        output_redirect = strstr(subcommands[i], '>');
-        if(output_redirect){
-            //splits the commands by pipe
-
-            int ignored = split(subcommands[i], redirectParts, ">");
-            subcommands[i] = redirectParts[0];
-        }
 
         char **my_argv = get_tokens(subcommands[i]);
         assert(my_argv != NULL);
         int len = sizeof(my_argv);
         my_argv[len] = NULL;
 
-
+//        int len = split(subcommands[i], my_argv, " ");
+//        my_argv[len] = NULL;
         if (built_in_help(my_argv) == 0) {
             return;
         }
@@ -218,26 +203,6 @@ void handle_command(char cmd[]) {
         //in child process
         if (pid == 0) {
             handle_piping(i, num_subcommands, pipe_list);
-
-            if(input_redirect){
-
-                // Close standard in
-                if (close(0) == -1) {
-                    perror("Error closing stdin");
-                    exit(1);
-                }
-
-                // Open the file for reading
-                int fd = open(redirectParts[1], O_RDONLY);
-
-                // The open file should replace standard in
-                assert(fd == 0);
-            }
-
-            if(output_redirect){
-
-            }
-
             execvp(my_argv[0], my_argv);
             printf("%s: command not found\n", my_argv[0]);
             exit(1);

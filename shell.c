@@ -185,6 +185,7 @@ void handle_command(char cmd[]) {
         char hello[256];
         strcpy(hello,subcommands[i]);
         char **my_argv = get_tokens(hello);
+        wait(my_argv[0]);
         assert(my_argv != NULL);
         int len = sizeof(my_argv);
         my_argv[len] = NULL;

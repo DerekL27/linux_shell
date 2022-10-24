@@ -14,9 +14,10 @@ int main(int argc, char **argv) {
   assert(tokens != NULL);
 
   char **current = tokens;
-  while (*current != NULL) {
-    printf("%s\n", *current);
-    ++current;
+  int i = 0;
+  while (current[i] != NULL) {
+    printf("%s\n", current[i]);
+    ++i;
   }
 
   free_tokens(tokens);

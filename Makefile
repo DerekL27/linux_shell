@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -std=c11
+CFLAGS=-g -std=c11 -D_DEFAULT_SOURCE
 
 TOKENIZE_OBJS=$(patsubst %.c,%.o,$(filter-out shell.c,$(wildcard *.c)))
 SHELL_OBJS=$(patsubst %.c,%.o,$(filter-out tokenize.c,$(wildcard *.c)))

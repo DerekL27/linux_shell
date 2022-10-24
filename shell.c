@@ -184,8 +184,6 @@ void handle_command(char cmd[]) {
         if(strstr(subcommands[i],"<")){
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
-            tempRedirect[0] = trim(tempRedirect[0]);
-            tempRedirect[1] = trim(tempRedirect[1]);
             close(0);
             assert(open(tempRedirect[1], O_RDONLY) != -1);
             subcommands[i] = tempRedirect[0];
@@ -193,8 +191,6 @@ void handle_command(char cmd[]) {
         if(strstr(subcommands[i],">")){
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,">");
-            tempRedirect[0] = trim(tempRedirect[0]);
-            tempRedirect[1] = trim(tempRedirect[1]);
             close(1);
             assert(open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644) != -1);
             subcommands[i] = tempRedirect[0];

@@ -182,9 +182,7 @@ void handle_command(char cmd[]) {
         // current command in the string of pipes
         //char *my_argv[BUFFER_SIZE];
         // get length of commands to pipe
-        char hello[256];
-        strcpy(hello,subcommands[i]);
-        char **my_argv = get_tokens(hello);
+        char **my_argv = get_tokens(subcommands[i]);
         assert(my_argv != NULL);
         int len = sizeof(my_argv);
         my_argv[len] = NULL;

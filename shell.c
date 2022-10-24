@@ -16,6 +16,8 @@
 
 pid_t child_processes[UINT_MAX];
 int child_count = 0;
+int stdoutcpy;
+int stdincpy;
 
 //keeps track of the last command executed for 'prev'
 char last[BUFFER_SIZE] = "";
@@ -183,14 +185,14 @@ void handle_command(char cmd[]) {
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
             close(0);
-            open(tempRedirect[1], O_RDONLY);
+            assert(open(tempRedirect[1], O_RDONLY) != -1+;
             subcommands[i] = tempRedirect[0];
         }
         if(strstr(subcommands[i],">")){
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
             close(1);
-            open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            assert(open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644) != -1);
             subcommands[i] = tempRedirect[0];
         }
 
@@ -235,6 +237,8 @@ void handle_command(char cmd[]) {
 // reads in the commands from the stdin and simulates a mini shell
 int main(int argc, char **argv){
 
+    stdoutcpy = dup(STDOUT_FILENO);
+    stdincpy = dup(STDIN_FILENO);
     char input[BUFFER_SIZE];
     printf("Welcome to mini-shell.\n");
 

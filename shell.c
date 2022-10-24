@@ -183,19 +183,17 @@ void handle_command(char cmd[]) {
         // get length of commands to pipe
 
         if(strstr(subcommands[i],"<")){
-            close(0);
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
-            int fd = open(tempRedirect[1], O_RDONLY);
-            dup2(fd, 0); // stdin now points to fd
+            close(0);
+            open(tempRedirect[1], O_RDONLY);
             subcommands[i] = tempRedirect[0];
         }
         if(strstr(subcommands[i],">")){
-            close(1);
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
-            int fd = open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            dup2(fd, 1); // stdin now points to fd
+            close(1);
+            open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
             subcommands[i] = tempRedirect[0];
         }
 

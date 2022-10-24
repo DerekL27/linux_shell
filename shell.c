@@ -186,14 +186,16 @@ void handle_command(char cmd[]) {
             close(0);
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
-            open(tempRedirect[1], O_RDONLY);
+            int fd = open(tempRedirect[1], O_RDONLY);
+            dup2(fd, 0); // stdin now points to fd
             subcommands[i] = tempRedirect[0];
         }
         if(strstr(subcommands[i],">")){
             close(1);
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
-            open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            int fd = open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            dup2(fd, 1); // stdin now points to fd
             subcommands[i] = tempRedirect[0];
         }
 

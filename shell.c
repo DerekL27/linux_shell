@@ -1,6 +1,7 @@
 // Implement your shell in this source file.
 
 #define _GNU_SOURCE
+#include "tokens.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -11,7 +12,6 @@
 #include <fcntl.h>
 #include <assert.h>
 #include <limits.h>
-#include "tokens.h"
 
 #define BUFFER_SIZE 255
 
@@ -185,7 +185,6 @@ void handle_command(char cmd[]) {
         char hello[256];
         strcpy(hello,subcommands[i]);
         char **my_argv = get_tokens(hello);
-        printf("%c", my_argv[0]);
         assert(my_argv != NULL);
         int len = sizeof(my_argv);
         my_argv[len] = NULL;

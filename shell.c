@@ -1,6 +1,5 @@
 // Implement your shell in this source file.
 
-#define _GNU_SOURCE
 #include "tokens.h"
 #include <stdio.h>
 #include <stdlib.h>

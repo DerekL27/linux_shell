@@ -182,6 +182,21 @@ void handle_command(char cmd[]) {
         //char *my_argv[BUFFER_SIZE];
         // get length of commands to pipe
 
+        if(strstr(subcommands[i],"<")){
+            close(0);
+            char* tempRedirect;
+            split(subcommands[i],tempRedirect,"<");
+            open(tempRedirect[1], O_RDONLY);
+            subcommands[i] = tempRedirect[0];
+        }
+        if(strstr(subcommands[i],">")){
+            close(1);
+            char* tempRedirect;
+            split(subcommands[i],tempRedirect,"<");
+            open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            subcommands[i] = tempRedirect[0];
+        }
+
         char **my_argv = get_tokens(subcommands[i]);
         assert(my_argv != NULL);
         int len = sizeof(my_argv);

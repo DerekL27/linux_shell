@@ -118,8 +118,7 @@ void add_token(const char* token) {
   if (tokens_full())
     grow_tokens();
 
-  char temp[256] = "";
-  strcpy(temp,token);
+  char* temp = strdup(token);
   tokens[tokens_size] = temp;
   ++tokens_size;
   tokens[tokens_size] = NULL;

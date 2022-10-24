@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <assert.h>
 #include <limits.h>
+#include "tokens.h"
 
 #define BUFFER_SIZE 255
 
@@ -117,12 +118,12 @@ int split(char input[], char* output[], char* delim) {
     char *token;
     int num_tokens = 0;
 
-    token = strtok(input, delim);
-    while (token != NULL) {
-        output[num_tokens] = token;
-        token = strtok (NULL, delim);
-        num_tokens += 1;
-    }
+        token = strtok(input, delim);
+        while (token != NULL) {
+            output[num_tokens] = token;
+            token = strtok (NULL, delim);
+            num_tokens += 1;
+        }
     return num_tokens;
 }
 
@@ -179,10 +180,15 @@ void handle_command(char cmd[]) {
     //execute commands split by piping
     for (int i = 0; i < num_subcommands; i += 1) {
         // current command in the string of pipes
-        char *my_argv[BUFFER_SIZE];
+        //char *my_argv[BUFFER_SIZE];
         // get length of commands to pipe
-        int len = split(subcommands[i], my_argv, " ");
+        char **my_argv = get_tokens(subcommands[i]);
+        assert(my_argv != NULL);
+        int len = sizeof(my_argv);
         my_argv[len] = NULL;
+
+//        int len = split(subcommands[i], my_argv, " ");
+//        my_argv[len] = NULL;
         if (built_in_help(my_argv) == 0) {
             return;
         }
@@ -211,6 +217,7 @@ void handle_command(char cmd[]) {
                 close(pipe_list[i][1]);
             }
         }
+        free_tokens(my_argv);
     }
 }
 

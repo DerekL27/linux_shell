@@ -1,6 +1,5 @@
 // Implement your shell in this source file.
-
-#include "tokens.h"
+#define _SVID_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -11,6 +10,7 @@
 #include <fcntl.h>
 #include <assert.h>
 #include <limits.h>
+#include "tokens.h"
 
 #define BUFFER_SIZE 255
 

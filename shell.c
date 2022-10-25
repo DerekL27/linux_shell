@@ -113,14 +113,24 @@ int built_in_help(char *my_argv[]) {
     return 0;
 }
 
-char *removeLeadingSpaces(char *str)
-{
+char *removeLeadingSpaces(char *str){
+    size_t size;
     char *end;
 
-    while(isspace(*str)) str++;
+    size = strlen(s);
 
-    if(*str == 0)
-        return str;
+    if (!size)
+        return s;
+
+    end = s + size - 1;
+    while (end >= s && isspace(*end))
+        end--;
+    *(end + 1) = '\0';
+
+    while (*s && isspace(*s))
+        s++;
+
+    return s;
 }
 
 // splits string in input on the specified delimiter and puts the split string in output

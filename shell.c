@@ -195,6 +195,7 @@ void handle_command(char cmd[]) {
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
             close(0);
+            tempRedirect[1] = removeLeadingSpaces(tempRedirect[1]);
             assert(open(removeLeadingSpaces(tempRedirect[1]), O_RDONLY) != -1);
             subcommands[i] = tempRedirect[0];
         }
@@ -202,7 +203,8 @@ void handle_command(char cmd[]) {
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,">");
             close(1);
-            assert(open(removeLeadingSpaces(tempRedirect[1]), O_WRONLY | O_CREAT | O_TRUNC, 0644) != -1);
+            tempRedirect[1] = removeLeadingSpaces(tempRedirect[1]);
+            assert(open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644) != -1);
             subcommands[i] = tempRedirect[0];
         }
 

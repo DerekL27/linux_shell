@@ -113,6 +113,16 @@ int built_in_help(char *my_argv[]) {
     return 0;
 }
 
+char *removeLeadingSpaces(char *str)
+{
+    char *end;
+
+    while(isspace(*str)) str++;
+
+    if(*str == 0)
+        return str;
+}
+
 // splits string in input on the specified delimiter and puts the split string in output
 int split(char input[], char* output[], char* delim) {
 
@@ -185,14 +195,14 @@ void handle_command(char cmd[]) {
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
             close(0);
-            assert(open(tempRedirect[1], O_RDONLY) != -1);
+            assert(open(removeLeadingSpaces(tempRedirect[1]), O_RDONLY) != -1);
             subcommands[i] = tempRedirect[0];
         }
         if(strstr(subcommands[i],">")){
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,">");
             close(1);
-            assert(open(tempRedirect[1], O_WRONLY | O_CREAT | O_TRUNC, 0644) != -1);
+            assert(open(removeLeadingSpaces(tempRedirect[1]), O_WRONLY | O_CREAT | O_TRUNC, 0644) != -1);
             subcommands[i] = tempRedirect[0];
         }
 

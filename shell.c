@@ -226,6 +226,8 @@ void handle_command(char cmd[]) {
         if (pid == 0) {
             handle_piping(i, num_subcommands, pipe_list);
             execvp(my_argv[0], my_argv);
+            dup2(stdincpy, STDIN_FILENO);
+            dup2(stdoutcpy, STDOUT_FILENO);
             printf("%s: command not found\n", my_argv[0]);
             exit(1);
         }

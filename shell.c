@@ -113,7 +113,7 @@ int built_in_help(char *my_argv[]) {
     return 0;
 }
 
-char *removeLeadingSpaces(char *str){
+char *removeLeadingSpaces(char *s){
     size_t size;
     char *end;
 

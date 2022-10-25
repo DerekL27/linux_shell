@@ -37,7 +37,6 @@ void exit_help(char *my_argv[]) {
 //code for 'cd'
 void cd_help(char *my_argv[]) {
     pid_t pid = fork();
-
     child_processes[child_count] = pid;
     child_count +=1 ;
 
@@ -54,7 +53,7 @@ void source_help(char *my_argv[]) {
     char *name = my_argv[1];
     FILE *path = fopen(name, "r");
 
-    //create a new process in case the file cannot be found and needs to exit back to mini-shell
+    //forking so that we can return if file doesn't exist
     pid_t pid = fork();
     child_processes[child_count] = pid;
     child_count += 1;
@@ -81,6 +80,7 @@ void source_help(char *my_argv[]) {
 
 //code for 'prev'
 void prev_help(char *my_argv[]) {
+    //only execute if there is a previous cmd
     if (strcmp("", last) != 1) {
         char char_arr[BUFFER_SIZE];
         strcpy(char_arr, last);
@@ -116,16 +116,24 @@ int built_in_help(char *my_argv[]) {
     return 0;
 }
 
-//remove leading spaces in a string
-char *removeLeadingSpaces(char *str){
+//remove leading spaces and trailing in a string
+char *removeLeadingAndTrailingSpaces(char *str){
     size_t size;
     char *end;
     size = strlen(str);
 
-    //checks if the string is empty or not
+    //if size is zero
     if (!size)
         return str;
 
+    //start counting spaces from back
+    end = str + size - 1;
+    while (end >= str && isspace(*end))
+        end--;
+    //put a end of string flag once spaces stop
+    *(end + 1) = '\0';
+
+    //move string pointer forward until no more spaces
     while (*str && isspace(*str))
         str++;
 

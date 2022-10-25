@@ -16,14 +16,17 @@
 
 pid_t child_processes[UINT_MAX];
 int child_count = 0;
-int stdoutcpy;
-int stdincpy;
+
+//original std in and out to restore after redirection/piping
+int original_out;
+int original_in;
 
 //keeps track of the last command executed for 'prev'
 char last[BUFFER_SIZE] = "";
 
 //code for 'exit'
 void exit_help(char *my_argv[]) {
+    //kill children so the whole thing exists
     for (int i = 0; i < child_count; i += 1) {
         kill(child_processes[i], SIGKILL);
     }
@@ -113,27 +116,23 @@ int built_in_help(char *my_argv[]) {
     return 0;
 }
 
-char *removeLeadingSpaces(char *s){
+//remove leading spaces in a string
+char *removeLeadingSpaces(char *str){
     size_t size;
     char *end;
+    size = strlen(str);
 
-    size = strlen(s);
-
+    //checks if the string is empty or not
     if (!size)
-        return s;
+        return str;
 
-    end = s + size - 1;
-    while (end >= s && isspace(*end))
-        end--;
-    *(end + 1) = '\0';
+    while (*str && isspace(*str))
+        str++;
 
-    while (*s && isspace(*s))
-        s++;
-
-    return s;
+    return str;
 }
 
-// splits string in input on the specified delimiter and puts the split string in output
+// splits string in input on the specified delimiter and puts the split string in output, returns number of tokens
 int split(char input[], char* output[], char* delim) {
 
     char *token;
@@ -189,10 +188,10 @@ void handle_command(char cmd[]) {
     }
     char *subcommands[BUFFER_SIZE];
 
-    //splits the commands by pipe
+    //splits the commands by pipe order
     int num_subcommands = split(cmd, subcommands, "|");
 
-    //init list of pipes
+    //initialize all pipes
     int pipe_list[num_subcommands - 1][2];
     for (int i = 0; i < num_subcommands - 1; i ++) {
         assert(pipe(pipe_list[i]) == 0);
@@ -201,6 +200,7 @@ void handle_command(char cmd[]) {
     //execute commands split by piping
     for (int i = 0; i < num_subcommands; i += 1) {
 
+        //if input redirect
         if(strstr(subcommands[i],"<")){
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,"<");
@@ -209,6 +209,8 @@ void handle_command(char cmd[]) {
             assert(open(removeLeadingSpaces(tempRedirect[1]), O_RDONLY) != -1);
             subcommands[i] = tempRedirect[0];
         }
+
+        //if output redirect
         if(strstr(subcommands[i],">")){
             char* tempRedirect[2];
             split(subcommands[i],tempRedirect,">");
@@ -218,13 +220,13 @@ void handle_command(char cmd[]) {
             subcommands[i] = tempRedirect[0];
         }
 
+        //get tokens for each command, not split due to double quote tokenization
         char **my_argv = get_tokens(subcommands[i]);
         assert(my_argv != NULL);
         int len = sizeof(my_argv);
         my_argv[len] = NULL;
 
-//        int len = split(subcommands[i], my_argv, " ");
-//        my_argv[len] = NULL;
+        //check for built-in function and it successfully executes exit
         if (built_in_help(my_argv) == 0) {
             return;
         }
@@ -234,17 +236,19 @@ void handle_command(char cmd[]) {
         pid_t pid = fork();
         child_processes[child_count] = pid;
         child_count +=1 ;
+
         //in child process
         if (pid == 0) {
             handle_piping(i, num_subcommands, pipe_list);
             execvp(my_argv[0], my_argv);
+            //command not found: we only get here if execvp fails
             printf("%s: command not found\n", my_argv[0]);
             exit(1);
         }
         //in parent process
         else {
             wait(&child_status);
-            //terminate if child process fails
+            //kill child process if not successful
             if (WEXITSTATUS(child_status) == 1) {
                 return;
             }
@@ -252,6 +256,7 @@ void handle_command(char cmd[]) {
                 close(pipe_list[i][1]);
             }
         }
+        //free tokens at the end
         free_tokens(my_argv);
     }
 }
@@ -259,8 +264,9 @@ void handle_command(char cmd[]) {
 // reads in the commands from the stdin and simulates a mini shell
 int main(int argc, char **argv){
 
-    stdoutcpy = dup(STDOUT_FILENO);
-    stdincpy = dup(STDIN_FILENO);
+    //set the original std in and out to be able to restore later
+    original_out = dup(STDOUT_FILENO);
+    original_in = dup(STDIN_FILENO);
     char input[BUFFER_SIZE];
     printf("Welcome to mini-shell.\n");
 
@@ -268,22 +274,31 @@ int main(int argc, char **argv){
 
         printf("shell $");
         fgets(input, BUFFER_SIZE, stdin);
+
+        //exit on ctrl + D
         if (feof(stdin)){
             printf("\nBye bye.\n");
             exit(0);
         }
+
+        //remove trailing newline after hitting enter for a command
         input[strcspn(input, "\n")] = 0;
         char *commands[BUFFER_SIZE];
+
         // split the input into different commands by semicolon
         int num_commands = split(input, commands, ";");
 
         //parse all commands
         for (int i = 0; i < num_commands; i += 1) {
+
+            //executes the command
             handle_command(commands[i]);
+
+            //restores regular std in and out after each command in case each command alters it
             close(0);
             close(1);
-            dup2(stdincpy, STDIN_FILENO);
-            dup2(stdoutcpy, STDOUT_FILENO);
+            dup2(original_in, STDIN_FILENO);
+            dup2(original_out, STDOUT_FILENO);
         }
     }
 

@@ -19,7 +19,7 @@ int child_count = 0;
 
 //original std in and out to restore after redirection/piping
 int original_out;
-int original_in;
+int stdincpy;
 
 //keeps track of the last command executed for 'prev'
 char last[BUFFER_SIZE] = "";
@@ -266,7 +266,7 @@ int main(int argc, char **argv){
 
     //set the original std in and out to be able to restore later
     original_out = dup(STDOUT_FILENO);
-    original_in = dup(STDIN_FILENO);
+    stdincpy = dup(STDIN_FILENO);
     char input[BUFFER_SIZE];
     printf("Welcome to mini-shell.\n");
 
@@ -297,7 +297,7 @@ int main(int argc, char **argv){
             //restores regular std in and out after each command in case each command alters it
             close(0);
             close(1);
-            dup2(original_in, STDIN_FILENO);
+            dup2(stdincpy, STDIN_FILENO);
             dup2(original_out, STDOUT_FILENO);
         }
     }

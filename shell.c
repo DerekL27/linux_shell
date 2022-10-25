@@ -214,7 +214,7 @@ void handle_command(char cmd[]) {
             split(subcommands[i],tempRedirect,"<");
             close(0);
             tempRedirect[1] = removeLeadingAndTrailingSpaces(tempRedirect[1]);
-            assert(open(tempRedirect[1], O_RDONLY) != -1);
+            assert(open(removeLeadingAndTrailingSpaces(tempRedirect[1]), O_RDONLY) != -1);
             subcommands[i] = tempRedirect[0];
         }
 

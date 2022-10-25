@@ -18,8 +18,8 @@ pid_t child_processes[UINT_MAX];
 int child_count = 0;
 
 //original std in and out to restore after redirection/piping
-int original_out;
-int stdincpy;
+int og_in;
+int og_out;
 
 //keeps track of the last command executed for 'prev'
 char last[BUFFER_SIZE] = "";
@@ -265,8 +265,8 @@ void handle_command(char cmd[]) {
 int main(int argc, char **argv){
 
     //set the original std in and out to be able to restore later
-    original_out = dup(STDOUT_FILENO);
-    stdincpy = dup(STDIN_FILENO);
+    og_in = dup(STDIN_FILENO);
+    og_out = dup(STDOUT_FILENO);
     char input[BUFFER_SIZE];
     printf("Welcome to mini-shell.\n");
 
@@ -297,8 +297,8 @@ int main(int argc, char **argv){
             //restores regular std in and out after each command in case each command alters it
             close(0);
             close(1);
-            dup2(stdincpy, STDIN_FILENO);
-            dup2(original_out, STDOUT_FILENO);
+            dup2(og_in, STDIN_FILENO);
+            dup2(og_out, STDOUT_FILENO);
         }
     }
 
